@@ -4,10 +4,20 @@
         <TargetFramework>net6.0</TargetFramework>
     </PropertyGroup>
 
+    <PropertyGroup>
+        <!-- To pull Terminal.Gui from a local nuget source:                        
+        - Build Terminal.Gui locally in ../../gui-cs/Terminal.Gui          
+        - Change Terminal.Gui Version= to "major.minor.patch-*"     
+        - Add ';https://api.nuget.org/v3/index.json' to the end of the RestoreSources property group below
+        - Uncomment the RestoreSources property group below
+        -->
+        <!-- <RestoreSources>$(RestoreSources);../../../gui-cs/Terminal.Gui/Terminal.Gui/bin/Debug</RestoreSources> -->
+    </PropertyGroup>
+
     <ItemGroup>
-        <PackageReference Include="Nstack.Core" Version="1.0.7" />
-        <PackageReference Include="Terminal.Gui" Version="1.10" />
-        <PackageReference Include="Microsoft.PowerShell.SDK" Version="7.2.6" />
+        <PackageReference Include="Nstack.Core" Version="1.1.1" />
+        <PackageReference Include="Terminal.Gui" Version="1.15.1" />
+        <PackageReference Include="Microsoft.PowerShell.SDK" Version="7.2.18" />
     </ItemGroup>
 
     <ItemGroup>
@@ -17,4 +27,10 @@
     <ItemGroup>
         <None Update="Microsoft.PowerShell.ConsoleGuiTools.psd1" CopyToOutputDirectory="PreserveNewest" />
     </ItemGroup>
+
+    <PropertyGroup>
+        <EnableNETAnalyzers>true</EnableNETAnalyzers>
+        <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+        <AnalysisMode>Recommended</AnalysisMode>
+    </PropertyGroup>
 </Project>

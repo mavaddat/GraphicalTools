@@ -1,6 +1,6 @@
-# GraphicalTools - `Out-ConsoleGridView`
+# ConsoleGuiTools - `Out-ConsoleGridView` and `Show-ObjectTree`
 
-The GraphicalTools repo contains the `Out-ConsoleGridView` 
+This repo contains the `Out-ConsoleGridView` 
 PowerShell Cmdlet providing console-based GUI experiences based on
 [Terminal.Gui (gui.cs)](https://github.com/gui-cs/Terminal.Gui).
 
@@ -14,18 +14,24 @@ Install-Module Microsoft.PowerShell.ConsoleGuiTools
 
 ## Features
 
-Cross-platform! Use the cmdlet
-[`Out-ConsoleGridview`](docs/Microsoft.PowerShell.ConsoleGuiTools/Out-ConsoleGridView.md)
-to view and filter objects graphically.
+* [`Out-ConsoleGridview`](docs/Microsoft.PowerShell.ConsoleGuiTools/Out-ConsoleGridView.md) - Send objects to a grid view window for interactive filtering and sorting.
+* [`Show-ObjectTree`](docs/Microsoft.PowerShell.ConsoleGuiTools/Show-ObjectTree.md) - Send objects to a tree view window for interactive filtering and sorting.
 
-![screenshot of Out-ConsoleGridView](docs/Microsoft.PowerShell.ConsoleGuiTools/ocgv.gif)
+* Cross-platform - Works on any platform that supports PowerShell 7.2+.
+* Interactive - Use the mouse and keyboard to interact with the grid or tree view.
+* Filtering - Filter the data using the built-in filter box.
+* Sorting - Sort the data by clicking on the column headers.
+* Multiple Selection - Select multiple items and send them down the pipeline.
+* Customizable - Customize the grid view window with the built-in parameters.
+
+![Demo GIF](docs/Microsoft.PowerShell.ConsoleGuiTools/ocgv.gif)
 
 ## Examples
 
 ### Example 1: Output processes to a grid view
 
 ```PowerShell
-PS C:\> Get-Process | Out-ConsoleGridView
+Get-Process | Out-ConsoleGridView
 ```
 
 This command gets the processes running on the local computer and sends them to a grid view window.
@@ -33,8 +39,8 @@ This command gets the processes running on the local computer and sends them to 
 ### Example 2: Use a variable to output processes to a grid view
 
 ```PowerShell
-PS C:\> $P = Get-Process
-PS C:\> $P | Out-ConsoleGridView -OutputMode Single
+$P = Get-Process
+$P | Out-ConsoleGridView -OutputMode Single
 ```
 
 This command also gets the processes running on the local computer and sends them to a grid view window.
@@ -48,7 +54,7 @@ By specifying `-OutputMode Single` the grid view window will be restricted to a 
 ### Example 3: Display a formatted table in a grid view
 
 ```PowerShell
-PS C:\> Get-Process | Select-Object -Property Name, WorkingSet, PeakWorkingSet | Sort-Object -Property WorkingSet -Descending | Out-ConsoleGridView
+Get-Process | Select-Object -Property Name, WorkingSet, PeakWorkingSet | Sort-Object -Property WorkingSet -Descending | Out-ConsoleGridView
 ```
 
 This command displays a formatted table in a grid view window.
@@ -67,7 +73,7 @@ You can now use the features of the grid view to search, sort, and filter the da
 ### Example 4: Save output to a variable, and then output a grid view
 
 ```PowerShell
-PS C:\> ($A = Get-ChildItem -Path $pshome -Recurse) | Out-ConsoleGridView
+($A = Get-ChildItem -Path $pshome -Recurse) | Out-ConsoleGridView
 ```
 
 This command saves its output in a variable and sends it to **Out-ConsoleGridView**.
@@ -83,7 +89,7 @@ As a result, the output from the Get-ChildItem command is saved in the $A variab
 ### Example 5: Output processes for a specified computer to a grid view
 
 ```PowerShell
-PS C:\> Get-Process -ComputerName "Server01" | ocgv -Title "Processes - Server01"
+Get-Process -ComputerName "Server01" | ocgv -Title "Processes - Server01"
 ```
 
 This command displays the processes that are running on the Server01 computer in a grid view window.
@@ -93,8 +99,8 @@ The command uses `ocgv`, which is the built-in alias for the **Out-ConsoleGridVi
 ### Example 6: Define a function to kill processes using a graphical chooser
 
 ```PowerShell
-PS C:\> function killp { Get-Process | Out-ConsoleGridView -OutputMode Single -Filter $args[0] | Stop-Process -Id {$_.Id} }
-PS C:\> killp note
+function killp { Get-Process | Out-ConsoleGridView -OutputMode Single -Filter $args[0] | Stop-Process -Id {$_.Id} }
+killp note
 ```
 This example shows defining a function named `killp` that shows a grid view of all running processes and allows the user to select one to kill it.
 
@@ -103,7 +109,7 @@ The example uses the `-Filter` paramter to filter for all proceses with a name t
 ### Example 7: Pass multiple items through Out-ConsoleGridView
 
 ```PowerShell
-PS C:\> Get-Process | Out-ConsoleGridView -PassThru | Export-Csv -Path .\ProcessLog.csv
+Get-Process | Out-ConsoleGridView -PassThru | Export-Csv -Path .\ProcessLog.csv
 ```
 
 This command lets you select multiple processes from the **Out-ConsoleGridView** window.
@@ -123,6 +129,16 @@ Press `Shift-F7` to see the history for all PowerShell instances.
 Whatever you select within `Out-ConsoleGridView` will be inserted on your command line. 
 
 Whatever was typed on the command line prior to hitting `F7` or `Shift-F7` will be used as a filter.
+
+### Example 9: Output processes to a tree view
+
+```PowerShell
+PS C:\> Get-Process | Show-ObjectTree
+```
+
+This command gets the processes running on the local computer and sends them to a tree view window.
+
+Use right arrow when a row has a `+` symbol to expand the tree. Left arrow will collapse the tree.
 
 ## Development
 
@@ -147,7 +163,9 @@ Now you're ready to build the code.  You can do so in one of two ways:
 ### 4. Building the code from PowerShell
 
 ```powershell
-PS ./GraphicalTools> Invoke-Build Build -ModuleName Microsoft.PowerShell.ConsoleGuiTools
+pushd ./GraphicalTools
+Invoke-Build Build -ModuleName Microsoft.PowerShell.ConsoleGuiTools
+popd
 ```
 
 From there you can import the module that you just built for example (start a fresh `pwsh` instance first so you can unload the module with an `exit`; otherwise building again may fail because the `.dll` will be held open):
@@ -170,7 +188,7 @@ exit
 ### 5. Debugging in Visual Studio Code
 
 ```powershell
-PS ./GraphicalTools> code .
+code ./GraphicalTools
 ```
 
 Build by hitting `Ctrl-Shift-B` in VS Code.
